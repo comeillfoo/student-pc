@@ -3,32 +3,61 @@
 %}
 
 /* declare tokens */
-%token NUMBER
-%token ADD SUB MUL DIV ABS
+%token IDENT
+%token CONST
 %token OP CP
-%token EOL
+%token NOT
+%token UNARY_MINUS
+%token BIN_MINUS BIN_PLUS BIN_MUL BIN_DIV BIN_POW BIN_LESS BIN_GREATER BIN_EQUALS
+%token ASSIGN
+%token REPEAT UNTIL
 
 %%
 
-calclist: /* nothing */
- | calclist exp EOL { printf( "= %d\n> ", $2 ); }
- | calclist EOL { printf( "> " ); } /* blank line or a comment */
+program: 
+ | statements_list
+ | loop_statement
  ;
 
-exp: factor
- | exp ADD exp { $$ = $1 + $3; }
- | exp SUB factor { $$ = $1 - $3; }
- | exp ABS factor { $$ = $1 | $3; }
+statements_list: statement
+ | statement statements_list 
+ ; 
+
+statement: assignment
+ // | TODO: add rest of rules
  ;
 
-factor: term
- | factor MUL term { $$ = $1 * $3; }
- | factor DIV term { $$ = $1 / $3; }
+assignment: IDENT ASSIGN expression
  ;
 
-term: NUMBER
- | ABS term { $$ = $2 >= 0? $2 : - $2; }
- | OP exp CP { $$ = $2; }
+expression: unop subexpression
+ | subexpression
+ ;
+
+subexpression: OP expression CP
+ | operand
+ | subexpression binop subexpression
+ ;
+
+unop: UNARY_MINUS
+ | NOT
+ ;
+
+binop: BIN_MINUS
+ | BIN_PLUS
+ | BIN_MUL
+ | BIN_DIV
+ | BIN_POW
+ | BIN_LESS
+ | BIN_GREATER
+ | BIN_EQUALS
+ ;
+
+operand: IDENT
+ | CONST
+ ;
+
+loop_statement: REPEAT statements_list UNTIL expression
  ;
 
 %%
