@@ -16,11 +16,20 @@
 "=="   { return BIN_EQUALS; }
 "("    { return OP; }
 ")"    { return CP; }
-[0-9]+ { yylval = atoi( yytext ); return CONST; }
+","    { return COMMA; }
+";"    { return EOEXPR; }
+[0-9]  {return NUMBER; }
+[A-z]  {return LETTER; }
+[0-9][0-9]+ { yylval = atoi( yytext ); return CONST; }
 "="    { return ASSIGN; }
+"Begin" { return "BEGIN";}
+"End" {return "END"}
 "REPEAT" { return REPEAT; }
 "UNTIL"  { return UNTIL; }
-[A-z]+ { return IDENT; }
+"IF"   { return IF; }
+"ELSE" { return ELSE; }
+"Var"  { return VAR; }
+[A-z][A-z]+ { return IDENT; }
 
 "//".*  
 [ \t\n]  { /* ignore white space */ }
