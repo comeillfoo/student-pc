@@ -22,8 +22,8 @@
 [A-z]  {return LETTER; }
 [0-9][0-9]+ { yylval = atoi( yytext ); return CONST; }
 "="    { return ASSIGN; }
-"Begin" { return "BEGIN";}
-"End" {return "END"}
+"Begin" { return BEGINNING;}
+"End" {return END; }
 "REPEAT" { return REPEAT; }
 "UNTIL"  { return UNTIL; }
 "IF"   { return IF; }

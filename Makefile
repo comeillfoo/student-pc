@@ -13,8 +13,8 @@ all: build $(CNAME)
 build:
 	mkdir -p $(BUILDIR)
 
-$(CNAME): $(BUILDIR)/$(CNAME).lex.c $(BUILDIR)/$(CNAME).tab.c
-	$(CC) -o $@ -lfl $^
+$(CNAME): $(BUILDIR)/$(CNAME).tab.c $(BUILDIR)/$(CNAME).lex.c
+	$(CC) -o $@ $^ -lfl
 
 $(BUILDIR)/%.lex.c: $(SRCDIR)/$(LEXDIR)/%.lex.l
 	$(LEX) -o $@ $^

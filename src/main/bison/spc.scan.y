@@ -11,7 +11,7 @@
 %token NOT
 %token UNARY_MINUS
 %token BIN_MINUS BIN_PLUS BIN_MUL BIN_DIV BIN_POW BIN_LESS BIN_GREATER BIN_EQUALS
-%token BEGIN END
+%token BEGINNING END
 %token ASSIGN
 %token REPEAT UNTIL IF ELSE
 
@@ -21,7 +21,7 @@ program: variables_declaration description_of_calculations
  | loop_statement // ?
  ;
 
-description_of_calculations: BEGIN statements_list END
+description_of_calculations: BEGINNING statements_list END
  ;
 variables_declaration: VAR variables_list
  ;
@@ -41,7 +41,7 @@ statement: assignment
  | composed_statement
  ;
 
-composed_statement: BEGIN statements_list END
+composed_statement: BEGINNING statements_list END
  ;
 
 assignment: IDENT ASSIGN expression
