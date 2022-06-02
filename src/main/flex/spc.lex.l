@@ -19,7 +19,7 @@
 ")"         { return CP; }
 ","         { return COMMA; }
 ";"         { return EOEXPR; }
-"\."         { return DOT;    }
+"\."        { return DOT;    }
 [0-9]+      { yylval = atoi( yytext ); return CONST; }
 "="         { return ASSIGN; }
 "Begin"     { return BEGINNING;}
