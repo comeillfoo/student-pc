@@ -1,3 +1,4 @@
+// fact8.pas
 Var n, result;
 Begin
     n = 8;
