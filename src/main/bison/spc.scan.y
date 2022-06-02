@@ -1,3 +1,5 @@
+%locations
+
 %{
   #include <stdio.h>
   #include <stdlib.h>
@@ -92,6 +94,10 @@ int main( void ) {
 }
 
 void yyerror( char const* s ) {
-  fprintf( stderr, "error: %d:%d: %s\n", 0, 0, s );
+  fprintf( stderr, "error: %d:%d-%d:%d: %s\n",
+    yylloc.first_line,
+    yylloc.first_column,
+    yylloc.last_line,
+    yylloc.last_column, s );
   exit(1);
 }

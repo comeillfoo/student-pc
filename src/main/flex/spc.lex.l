@@ -2,6 +2,22 @@
   #include <assert.h>
   #include "spc.tab.h"
 
+  static struct { size_t line; size_t column; } current_position = { 1, 1 };
+
+  static size_t line( )   { return current_position.line; }
+  static size_t column( ) { return current_position.column; }
+
+  static void add_line( size_t n )   { current_position.line += n; }
+  static void add_column( size_t n ) { current_position.column += n; }
+  static void drop_column( ) { current_position.column = 1; }
+
+  #define YY_USER_ACTION { \
+    yylloc.first_line   = line( ); \
+    yylloc.last_line    = line( ); \
+    yylloc.first_column = column( ); \
+    yylloc.last_column  = column( ) + yyleng - 1; \
+    add_column( yyleng ); }
+
 %}
 
 %%
@@ -32,7 +48,8 @@
 [A-z]+      { return IDENT; }
 
 "//".*  
-[ \t\n]     { /* ignore white space */ }
+[ \t]       { /* ignore white space */ }
+\n          { drop_column( ); add_line( 1 ); yylloc.first_line++; }
 .           { assert( "critical error: mystery character\n" ); return ERROR; }
 
 %%
