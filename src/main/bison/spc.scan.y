@@ -3,17 +3,16 @@
 %}
 
 /* declare tokens */
-%token IDENT LETTER
-%token VAR
-%token EOEXPR COMMA
-%token CONST NUMBER
-%token OP CP
-%token NOT
-%token UNARY_MINUS
-%token BIN_MINUS BIN_PLUS BIN_MUL BIN_DIV BIN_POW BIN_LESS BIN_GREATER BIN_EQUALS
-%token BEGINNING END DOT
-%token ASSIGN
-%token REPEAT UNTIL IF ELSE
+%precedence IDENT LETTER
+%precedence CONST NUMBER
+%precedence OP CP
+%left NOT MINUS
+%left BIN_PLUS BIN_MUL BIN_DIV BIN_POW BIN_LESS BIN_GREATER BIN_EQUALS
+%right ASSIGN
+%precedence VAR
+%precedence EOEXPR COMMA
+%precedence REPEAT UNTIL IF ELSE
+%precedence BEGINNING END DOT
 
 %%
 
@@ -56,11 +55,11 @@ subexpression: OP expression CP
  | subexpression binop subexpression
  ;
 
-unop: UNARY_MINUS
+unop: MINUS
  | NOT
  ;
 
-binop: BIN_MINUS
+binop: MINUS
  | BIN_PLUS
  | BIN_MUL
  | BIN_DIV

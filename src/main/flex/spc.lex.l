@@ -5,9 +5,8 @@
 %%
 
 "not"       { return NOT; }
-"-"         { return UNARY_MINUS; }
+"-"         { return MINUS; }
 "+"         { return BIN_PLUS; }
-"-"         { return BIN_MINUS; }
 "*"         { return BIN_MUL; }
 "/"         { return BIN_DIV; }
 "**"        { return BIN_POW; }
