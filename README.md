@@ -58,22 +58,22 @@
 
 ## Список реализованных правил
 
-| Статус             | Название из варианта    | Название в `spc.scan.y`       |
-| ------------------ | ----------------------- | ----------------------------- |
-| :heavy_check_mark: | <Программа>             | `program`                     |
-| :heavy_check_mark: | <Описание вычислений>   | `description_of_calculations` |
-| :heavy_check_mark: | <Объявление переменных> | `variables_declaration`       |
-| :heavy_check_mark: | <Список переменных>     | `variables_list`              |
-| :heavy_check_mark: | <Список операторов>     | `statements_list`             |
-| :heavy_check_mark: | <Оператор>              | `statement`                   |
-| :heavy_check_mark: | <Составной оператор>    | `composed_statement`          |
-| :heavy_check_mark: | <Присваивание>          | `assignment`                  |
-| :heavy_check_mark: | <Выражение>             | `expression`                  |
-| :heavy_check_mark: | <Подвыражение>          | `subexpression`               |
-| :heavy_check_mark: | <Ун. оп.>               | `unop`                        |
-| :heavy_check_mark: | <Бин. оп.>              | `binop`                       |
-| :heavy_check_mark: | <Операнд>               | `operand`                     |
-| :heavy_check_mark: | <Сложный оператор>      | `branch_statement`            |
-| :heavy_check_mark: | <Оператор цикла>        | `loop_statement`              |
-| :heavy_check_mark: | <Идент>                 | `ident`                       |
-| :heavy_check_mark: | <Const>                 | `const`                       |
+| Статус             | Название из варианта      | Название в `spc.scan.y`       |
+| ------------------ | ------------------------- | ----------------------------- |
+| :heavy_check_mark: | `<Программа>`             | `program`                     |
+| :heavy_check_mark: | `<Описание вычислений>`   | `description_of_calculations` |
+| :heavy_check_mark: | `<Объявление переменных>` | `variables_declaration`       |
+| :heavy_check_mark: | `<Список переменных>`     | `variables_list`              |
+| :heavy_check_mark: | `<Список операторов>`     | `statements_list`             |
+| :heavy_check_mark: | `<Оператор>`              | `statement`                   |
+| :heavy_check_mark: | `<Составной оператор>`    | `composed_statement`          |
+| :heavy_check_mark: | `<Присваивание>`          | `assignment`                  |
+| :heavy_check_mark: | `<Выражение>`             | `expression`                  |
+| :heavy_check_mark: | `<Подвыражение>`          | `subexpression`               |
+| :heavy_check_mark: | `<Ун. оп.>`               | `unop`                        |
+| :heavy_check_mark: | `<Бин. оп.>`              | `binop`                       |
+| :heavy_check_mark: | `<Операнд>`               | `operand`                     |
+| :heavy_check_mark: | `<Сложный оператор>`      | `branch_statement`            |
+| :heavy_check_mark: | `<Оператор цикла>`        | `loop_statement`              |
+| :heavy_check_mark: | `<Идент>`                 | `ident`                       |
+| :heavy_check_mark: | `<Const>`                 | `const`                       |
