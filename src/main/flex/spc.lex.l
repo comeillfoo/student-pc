@@ -18,6 +18,7 @@
 ")"         { return CP; }
 ","         { return COMMA; }
 ";"         { return EOEXPR; }
+"."         { return DOT;    }
 [0-9]       { return NUMBER; }
 [A-z]       { return LETTER; }
 [0-9][0-9]+ { yylval = atoi( yytext ); return CONST; }
