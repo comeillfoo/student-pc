@@ -27,5 +27,6 @@ $(BUILDIR)/%.tab.c: $(SRCDIR)/$(YACCDIR)/%.scan.y
 
 clean:
 	rm -rf build
+	rm -f $(CNAME)
 
 .PHONY: clean

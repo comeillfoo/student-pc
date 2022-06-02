@@ -1,4 +1,4 @@
-# student-pc (student-program-compiler)
+# student-pc (student-pascal-compiler)
 
 ## Задание. Вариант 7.
 
