@@ -19,10 +19,8 @@
 ")"         { return CP; }
 ","         { return COMMA; }
 ";"         { return EOEXPR; }
-"."         { return DOT;    }
-[0-9]       { return NUMBER; }
-[A-z]       { return LETTER; }
-[0-9][0-9]+ { yylval = atoi( yytext ); return CONST; }
+"\."         { return DOT;    }
+[0-9]+      { yylval = atoi( yytext ); return CONST; }
 "="         { return ASSIGN; }
 "Begin"     { return BEGINNING;}
 "End"       { return END; }
@@ -31,7 +29,7 @@
 "IF"        { return IF; }
 "ELSE"      { return ELSE; }
 "Var"       { return VAR; }
-[A-z][A-z]+ { return IDENT; }
+[A-z]+      { return IDENT; }
 
 "//".*  
 [ \t\n]     { /* ignore white space */ }

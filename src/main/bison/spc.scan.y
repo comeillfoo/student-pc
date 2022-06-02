@@ -7,8 +7,7 @@
 %}
 
 /* declare tokens */
-%precedence IDENT LETTER
-%precedence CONST NUMBER
+%precedence IDENT CONST
 %precedence OP CP
 %left NOT MINUS
 %left BIN_PLUS BIN_MUL BIN_DIV BIN_POW BIN_LESS BIN_GREATER BIN_EQUALS
@@ -25,7 +24,7 @@ program: variables_declaration description_of_calculations
  | loop_statement // ?
  ;
 
-description_of_calculations: BEGINNING statements_list END DOT
+description_of_calculations: composed_statement DOT
  ;
  
 variables_declaration: VAR variables_list
@@ -74,8 +73,8 @@ binop: MINUS
  | BIN_EQUALS
  ;
 
-operand: ident
- | const
+operand: IDENT
+ | CONST
  ;
 
 branch_statement: IF OP expression CP statement
@@ -86,17 +85,10 @@ branch_statement: IF OP expression CP statement
 loop_statement: REPEAT statements_list UNTIL expression
  ;
 
-ident: LETTER ident | LETTER
- ;
-
-const: NUMBER const | NUMBER
- ;
-
 %%
 
 int main( void ) {
-  printf( "> " ); 
-  yyparse( );
+  printf( "%s\n", !yyparse( )? "true" : "false" );
 }
 
 void yyerror( char const* s ) {
