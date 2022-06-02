@@ -1,5 +1,7 @@
 %{
+  #include <assert.h>
   #include "spc.tab.h"
+
 %}
 
 %%
@@ -33,6 +35,6 @@
 
 "//".*  
 [ \t\n]     { /* ignore white space */ }
-.           { yyerror( "Mystery character %c\n", *yytext ); }
+.           { assert( "critical error: mystery character\n" ); return ERROR; }
 
 %%

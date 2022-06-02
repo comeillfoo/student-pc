@@ -1,5 +1,9 @@
 %{
   #include <stdio.h>
+  #include <stdlib.h>
+
+  int yylex(void);
+  void yyerror( char const* s );
 %}
 
 /* declare tokens */
@@ -13,6 +17,7 @@
 %precedence EOEXPR COMMA
 %precedence REPEAT UNTIL IF ELSE
 %precedence BEGINNING END DOT
+%token ERROR
 
 %%
 
@@ -89,11 +94,12 @@ const: NUMBER const | NUMBER
 
 %%
 
-main( ) {
+int main( void ) {
   printf( "> " ); 
   yyparse( );
 }
 
-yyerror( char* s ) {
-  fprintf(stderr, "error: %s\n", s);
+void yyerror( char const* s ) {
+  fprintf( stderr, "error: %d:%d: %s\n", 0, 0, s );
+  exit(1);
 }
