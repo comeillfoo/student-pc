@@ -88,7 +88,7 @@ loop_statement: REPEAT statements_list UNTIL expression
 %%
 
 int main( void ) {
-  printf( "%s\n", !yyparse( )? "true" : "false" );
+  return yyparse( );
 }
 
 void yyerror( char const* s ) {
