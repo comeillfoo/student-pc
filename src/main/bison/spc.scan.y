@@ -1,128 +1,132 @@
 %locations
 
+%code requires {
+  #include "ast.h"
+}
+
+
 %{
+
   #include <stdio.h>
   #include <stdlib.h>
+  #include <stdbool.h>
 
   int yylex(void);
   void yyerror( char const* s );
 
-  #define PROGRAM_TYPE 1000
-  #define NEW_BLOCK_TYPE 1001
-  #define ST_LIST 1002
-  #define ST 1003
-  #define VB_LIST 1004
-  #define dot 1005
-  #define var 1006
+  static struct ast_node* root = NULL; // pointer to the root of AST
+
 %}
 
 %union {
-  struct ast *a;
-  double d;
-  char *s;
-  int op;
+  struct ast_node* node;
+  int         value;
+  char*       name;
+  enum operation_type oper;
 }
 
 /* declare tokens */
-%precedence <op> VAR
-%precedence <s> IDENT
-%precedence  <d> CONST
-%precedence <op> OP CP
-%left <op> NOT MINUS
-%left <op> BIN_PLUS BIN_MUL BIN_DIV BIN_POW BIN_LESS BIN_GREATER BIN_EQUALS
-%right <op> ASSIGN
+%precedence <name>  IDENT
+%precedence <value> CONST
+%precedence         OP CP
+%left       <oper>  NOT MINUS
+%left       <oper>  BIN_PLUS BIN_MUL BIN_DIV BIN_POW BIN_LESS BIN_GREATER BIN_EQUALS
+%right              ASSIGN
 
-%precedence <op> EOEXPR COMMA
-%precedence REPEAT UNTIL IF ELSE
-%precedence <op> BEGINNING END DOT
-%token ERROR
+%precedence         REPEAT UNTIL IF ELSE
+%precedence         EOEXPR COMMA
+%precedence         VAR BEGINNING END DOT
+%token              ERROR // used in lexer to return error
 
-%type <a> statements_list statement assignment branch_statement loop_statement composed_statement
-%type <a> expression
-%type <a> subexpression
-%type <op> unop binop
-%type <a> operand
-%type <a> variables_declaration description_of_calculations variables_list
-%type <a> program
+%type <oper> unop binop
+%type <node> statements_list statement assignment branch_statement loop_statement
+%type <node> expression
+%type <node> subexpression
+%type <node> operand
+%type <node> composed_statement
+%type <node> description_of_calculations
+%type <node> program
 
+%start program
 
 %%
 
-program: variables_declaration description_of_calculations { $$ = new_ast(PROGRAM_TYPE, $1, $2); }
+program: variables_declaration description_of_calculations { $$ = root = make_program( $2 ); }
  ;
 
-description_of_calculations: composed_statement DOT { $$ = new_ast(dot, $1, NULL); }
+description_of_calculations: composed_statement DOT { $$ = $1; }
  ;
 
-variables_declaration: VAR variables_list { $$ = new_ast(var, $2, NULL); }
+variables_declaration: VAR variables_list { /* there should be work with symbols table */ }
  ;
 
-variables_list: IDENT EOEXPR { printf("ident: %s\n", $1);$$ = new_ast(VB_LIST,$1, NULL); }
- | IDENT COMMA variables_list { $$ = new_ast(COMMA, $3, $2); }
- | IDENT EOEXPR variables_list { $$ = new_ast(EOEXPR, $3,$2); }
+variables_list: IDENT EOEXPR   { /* there should be work with symbols table */ }
+ | IDENT COMMA variables_list  { /* there should be work with symbols table */ }
+ | IDENT EOEXPR variables_list { /* there should be work with symbols table */ }
  ;
 
-statements_list: statement { $$ = new_ast(ST, $1, NULL); }
- | statement statements_list { $$ = new_ast(ST_LIST, $2, $1); }
+statements_list: statement   { $$ = make_stmts_list( $1, NULL ); }
+ | statement statements_list { stmts_list_insert( &$2, $1 ); $$ = $2; }
  ;
 
 statement: assignment { $$ = $1; }
- | branch_statement { $$ = $1; }
+ | branch_statement   { $$ = $1; }
  | composed_statement { $$ = $1; }
  ;
 
-composed_statement: BEGINNING statements_list END { $$ = new_ast(NEW_BLOCK_TYPE, $2, NULL) ;}
+composed_statement: BEGINNING statements_list END { $$ = $2; }
  ;
 
-assignment: IDENT ASSIGN expression EOEXPR { $$ = new_ast(1010, $1, $3); }
+assignment: IDENT ASSIGN expression EOEXPR { $$ = make_expr( make_ident( $1 ), OT_ASSIGN, $3 ); }
  ;
 
-expression: unop subexpression { $$ = new_ast(1011, NULL, $2); }
- | subexpression { $$ = $1 ;}
+expression: unop subexpression { $$ = make_unexpr( $1, $2 ); }
+ | subexpression               { $$ = $1; }
  ;
 
-subexpression: OP expression CP { $$ = $2; }
- | operand { $$ = $1; }
- | subexpression binop subexpression { $$ = new_ast(1012, $1, $3); }
+subexpression: OP expression CP      { $$ = $2; }
+ | operand                           { $$ = $1; }
+ | subexpression binop subexpression { $$ = make_expr( $1, $2, $3 ); }
  ;
 
-unop: MINUS { $$ = 'M' ;}
- | NOT { $$ = 'N' ;}
+unop: MINUS { $$ = OT_MINUS;  }
+ | NOT      { $$ = OT_UN_NOT; }
  ;
 
-binop: MINUS { $$ = '-'; }
- | BIN_PLUS { $$ = '+'; }
- | BIN_MUL { $$ = '*'; }
- | BIN_DIV  {$$ = '/'; }
- | BIN_POW { $$ = '^'; }
- | BIN_LESS { $$ = '<'; }
- | BIN_GREATER { $$ = '>'; }
- | BIN_EQUALS { $$ = 'E'; }
+binop: MINUS   { $$ = OT_MINUS;       }
+ | BIN_PLUS    { $$ = OT_BIN_PLUS;    }
+ | BIN_MUL     { $$ = OT_BIN_MUL;     }
+ | BIN_DIV     { $$ = OT_BIN_DIV;     }
+ | BIN_POW     { $$ = OT_BIN_POW;     }
+ | BIN_LESS    { $$ = OT_BIN_LESS;    }
+ | BIN_GREATER { $$ = OT_BIN_GREATER; }
+ | BIN_EQUALS  { $$ = OT_BIN_EQUALS;  }
  ;
 
-operand: IDENT { $$ = new_ident($1); }
- | CONST { $$ = new_num($1); }
+operand: IDENT { $$ = make_ident( $1 ); }
+ | CONST       { $$ = make_const( $1 ); }
  ;
 
-branch_statement: IF OP expression CP statement
- | IF OP expression CP statement ELSE statement
- | loop_statement
+branch_statement: IF OP expression CP statement { $$ = make_branch( $3, $5, NULL ); }
+ | IF OP expression CP statement ELSE statement { $$ = make_branch( $3, $5, $7   ); }
+ | loop_statement                               { $$ = $1; }
  ;
 
-loop_statement: REPEAT statements_list UNTIL expression
+loop_statement: REPEAT statements_list UNTIL expression { $$ = make_repeat( $4, $2 ); }
  ;
 
 %%
 
 int main( void ) {
-  return yyparse( );
+  bool parse_result = yyparse( );
+  return parse_result;
 }
 
-//void yyerror( char const* s ) {
-//  fprintf( stderr, "error: %d:%d-%d:%d: %s\n",
-//    yylloc.first_line,
-//    yylloc.first_column,
-//    yylloc.last_line,
-//    yylloc.last_column, s );
-//  exit(1);
-//}
+void yyerror( char const* s ) {
+  fprintf( stderr, "error: %d:%d-%d:%d: %s\n",
+    yylloc.first_line,
+    yylloc.first_column,
+    yylloc.last_line,
+    yylloc.last_column, s );
+  exit(1);
+}

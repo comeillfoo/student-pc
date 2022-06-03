@@ -1,7 +1,9 @@
 %option noyywrap nodefault yylineno
+
 %{
   #include <assert.h>
   #include "spc.tab.h"
+  #include "ot.h"
 
   static struct { size_t line; size_t column; } current_position = { 1, 1 };
 
@@ -26,9 +28,9 @@
 "not"       { return NOT; }
 "-"         { return MINUS; }
 "+"         { return BIN_PLUS; }
-"*"         { return BIN_MUL; }
+"\*"        { return BIN_MUL; }
 "/"         { return BIN_DIV; }
-"**"        { return BIN_POW; }
+"^"         { return BIN_POW; }
 "<"         { return BIN_LESS; }
 ">"         { return BIN_GREATER; }
 "=="        { return BIN_EQUALS; }
@@ -37,7 +39,7 @@
 ","         { return COMMA; }
 ";"         { return EOEXPR; }
 "\."        { return DOT;    }
-[0-9]+      { yylval.d = atof(yytext); return CONST; }
+[0-9]+      { yylval.value = atoi(yytext); return CONST; }
 "="         { return ASSIGN; }
 "Begin"     { return BEGINNING;}
 "End"       { return END; }
@@ -46,7 +48,7 @@
 "IF"        { return IF; }
 "ELSE"      { return ELSE; }
 "Var"       { return VAR; }
-[A-z]+      { yylval.s = yytext; return IDENT; }
+[A-z]+      { yylval.name = strdup(yytext); return IDENT; }
 
 "//".*  
 [ \t]       { /* ignore white space */ }
