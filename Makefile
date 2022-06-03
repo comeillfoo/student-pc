@@ -13,7 +13,7 @@ all: build $(CNAME)
 build:
 	mkdir -p $(BUILDIR)
 
-$(CNAME): $(BUILDIR)/$(CNAME).tab.c $(BUILDIR)/$(CNAME).lex.c
+$(CNAME): $(BUILDIR)/$(CNAME).tab.c $(BUILDIR)/$(CNAME).lex.c $(SRCDIR)/$(YACCDIR)/ast.c
 	@$(CC) -o $@ $^ -lfl
 	@printf "\033[1mCC\033[0m\t$^\n"
 

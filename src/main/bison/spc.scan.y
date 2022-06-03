@@ -6,77 +6,102 @@
 
   int yylex(void);
   void yyerror( char const* s );
+
+  #define PROGRAM_TYPE 1000
+  #define NEW_BLOCK_TYPE 1001
+  #define ST_LIST 1002
+  #define ST 1003
+  #define VB_LIST 1004
+  #define dot 1005
+  #define var 1006
 %}
 
+%union {
+  struct ast *a;
+  double d;
+  char *s;
+  int op;
+}
+
 /* declare tokens */
-%precedence IDENT CONST
-%precedence OP CP
-%left NOT MINUS
-%left BIN_PLUS BIN_MUL BIN_DIV BIN_POW BIN_LESS BIN_GREATER BIN_EQUALS
-%right ASSIGN
-%precedence VAR
-%precedence EOEXPR COMMA
+%precedence <op> VAR
+%precedence <s> IDENT
+%precedence  <d> CONST
+%precedence <op> OP CP
+%left <op> NOT MINUS
+%left <op> BIN_PLUS BIN_MUL BIN_DIV BIN_POW BIN_LESS BIN_GREATER BIN_EQUALS
+%right <op> ASSIGN
+
+%precedence <op> EOEXPR COMMA
 %precedence REPEAT UNTIL IF ELSE
-%precedence BEGINNING END DOT
+%precedence <op> BEGINNING END DOT
 %token ERROR
+
+%type <a> statements_list statement assignment branch_statement loop_statement composed_statement
+%type <a> expression
+%type <a> subexpression
+%type <op> unop binop
+%type <a> operand
+%type <a> variables_declaration description_of_calculations variables_list
+%type <a> program
+
 
 %%
 
-program: variables_declaration description_of_calculations
- | loop_statement // ?
+program: variables_declaration description_of_calculations { $$ = new_ast(PROGRAM_TYPE, $1, $2); }
  ;
 
-description_of_calculations: composed_statement DOT
- ;
- 
-variables_declaration: VAR variables_list
+description_of_calculations: composed_statement DOT { $$ = new_ast(dot, $1, NULL); }
  ;
 
-variables_list: IDENT EOEXPR
- | IDENT COMMA variables_list
- | IDENT EOEXPR variables_list
+variables_declaration: VAR variables_list { $$ = new_ast(var, $2, NULL); }
  ;
 
-statements_list: statement
- | statement statements_list 
- ; 
-
-statement: assignment
- | branch_statement
- | composed_statement
+variables_list: IDENT EOEXPR { printf("ident: %s\n", $1);$$ = new_ast(VB_LIST,$1, NULL); }
+ | IDENT COMMA variables_list { $$ = new_ast(COMMA, $3, $2); }
+ | IDENT EOEXPR variables_list { $$ = new_ast(EOEXPR, $3,$2); }
  ;
 
-composed_statement: BEGINNING statements_list END
+statements_list: statement { $$ = new_ast(ST, $1, NULL); }
+ | statement statements_list { $$ = new_ast(ST_LIST, $2, $1); }
  ;
 
-assignment: IDENT ASSIGN expression EOEXPR
+statement: assignment { $$ = $1; }
+ | branch_statement { $$ = $1; }
+ | composed_statement { $$ = $1; }
  ;
 
-expression: unop subexpression
- | subexpression
+composed_statement: BEGINNING statements_list END { $$ = new_ast(NEW_BLOCK_TYPE, $2, NULL) ;}
  ;
 
-subexpression: OP expression CP
- | operand
- | subexpression binop subexpression
+assignment: IDENT ASSIGN expression EOEXPR { $$ = new_ast(1010, $1, $3); }
  ;
 
-unop: MINUS
- | NOT
+expression: unop subexpression { $$ = new_ast(1011, NULL, $2); }
+ | subexpression { $$ = $1 ;}
  ;
 
-binop: MINUS
- | BIN_PLUS
- | BIN_MUL
- | BIN_DIV
- | BIN_POW
- | BIN_LESS
- | BIN_GREATER
- | BIN_EQUALS
+subexpression: OP expression CP { $$ = $2; }
+ | operand { $$ = $1; }
+ | subexpression binop subexpression { $$ = new_ast(1012, $1, $3); }
  ;
 
-operand: IDENT
- | CONST
+unop: MINUS { $$ = 'M' ;}
+ | NOT { $$ = 'N' ;}
+ ;
+
+binop: MINUS { $$ = '-'; }
+ | BIN_PLUS { $$ = '+'; }
+ | BIN_MUL { $$ = '*'; }
+ | BIN_DIV  {$$ = '/'; }
+ | BIN_POW { $$ = '^'; }
+ | BIN_LESS { $$ = '<'; }
+ | BIN_GREATER { $$ = '>'; }
+ | BIN_EQUALS { $$ = 'E'; }
+ ;
+
+operand: IDENT { $$ = new_ident($1); }
+ | CONST { $$ = new_num($1); }
  ;
 
 branch_statement: IF OP expression CP statement
@@ -93,11 +118,11 @@ int main( void ) {
   return yyparse( );
 }
 
-void yyerror( char const* s ) {
-  fprintf( stderr, "error: %d:%d-%d:%d: %s\n",
-    yylloc.first_line,
-    yylloc.first_column,
-    yylloc.last_line,
-    yylloc.last_column, s );
-  exit(1);
-}
+//void yyerror( char const* s ) {
+//  fprintf( stderr, "error: %d:%d-%d:%d: %s\n",
+//    yylloc.first_line,
+//    yylloc.first_column,
+//    yylloc.last_line,
+//    yylloc.last_column, s );
+//  exit(1);
+//}

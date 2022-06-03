@@ -1,3 +1,4 @@
+%option noyywrap nodefault yylineno
 %{
   #include <assert.h>
   #include "spc.tab.h"
@@ -36,7 +37,7 @@
 ","         { return COMMA; }
 ";"         { return EOEXPR; }
 "\."        { return DOT;    }
-[0-9]+      { yylval = atoi( yytext ); return CONST; }
+[0-9]+      { yylval.d = atof(yytext); return CONST; }
 "="         { return ASSIGN; }
 "Begin"     { return BEGINNING;}
 "End"       { return END; }
@@ -45,7 +46,7 @@
 "IF"        { return IF; }
 "ELSE"      { return ELSE; }
 "Var"       { return VAR; }
-[A-z]+      { return IDENT; }
+[A-z]+      { yylval.s = yytext; return IDENT; }
 
 "//".*  
 [ \t]       { /* ignore white space */ }
