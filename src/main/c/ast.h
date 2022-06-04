@@ -101,4 +101,10 @@ void stmts_list_insert( struct ast_node**, struct ast_node* );
 
 struct ast_node* make_program( struct ast_node* );
 
+typedef void (process_cb)( struct ast_node* );
+
+void dfs_traverse( struct ast_node*, process_cb, process_cb );
+
+void free_ast( struct ast_node* );
+
 #endif // _AST_H_

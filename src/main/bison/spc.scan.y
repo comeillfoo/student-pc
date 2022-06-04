@@ -2,6 +2,7 @@
 
 %code requires {
   #include "ast.h"
+  #include "tac.h"
 }
 
 
@@ -119,6 +120,14 @@ loop_statement: REPEAT statements_list UNTIL expression { $$ = make_repeat( $4, 
 
 int main( void ) {
   bool parse_result = yyparse( );
+
+  // traverse AST for generating TAC
+  if ( root == NULL )
+    fprintf( stderr, "can't find root\n" );
+  else dfs_traverse( root, pre_print_tac, post_print_tac );
+
+  // free the ast
+  free_ast( root );
   return parse_result;
 }
 

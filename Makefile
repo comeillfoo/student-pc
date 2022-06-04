@@ -17,7 +17,7 @@ build:
 copyc:
 	cp -f $(SRCDIR)/$(CDIR)/* $(BUILDIR)
 
-$(CNAME): $(BUILDIR)/$(CNAME).tab.c $(BUILDIR)/$(CNAME).lex.c $(BUILDIR)/ast.c
+$(CNAME): $(BUILDIR)/$(CNAME).tab.c $(BUILDIR)/$(CNAME).lex.c $(BUILDIR)/ast.c $(BUILDIR)/tac.c
 	@printf "\033[1mCC\033[0m\t$^\n"
 	@$(CC) -o $@ $^ -lfl
 

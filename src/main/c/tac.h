@@ -3,12 +3,7 @@
 
 #include "ast.h"
 
-typedef void ( pre_func )( struct ast* node );
-typedef void ( post_func )( struct ast* node );
-
-void pre_print_tac( struct ast* node );
-void post_print_tac( struct ast* node );
-
-void dfs_traverse( struct ast* node, pre_func pre, post_func post );
+void pre_print_tac( struct ast_node* node );
+void post_print_tac( struct ast_node* node );
 
 #endif /* _TAC_H_ */

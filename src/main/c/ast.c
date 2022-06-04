@@ -4,7 +4,7 @@
 
 #include "ast.h"
 
-static const char* ot_symbol[] = {
+const char* ot_symbol[] = {
   [ OT_UN_NOT ]      = "not",
   [ OT_BIN_PLUS ]    = "+",
   [ OT_BIN_MUL ]     = "*",
@@ -110,4 +110,56 @@ struct ast_node* make_program( struct ast_node* child ) {
   program->as_program.child = child;
   fprintf( stderr, "[ child: 0x%lx ]>\n", ( long unsigned int ) child );
   return program;
+}
+
+static void dump_cb( struct ast_node* node )   { return;       }
+static void free_node( struct ast_node* node ) {
+  fprintf( stderr, "freeing %lx\n", ( long unsigned int ) node );
+  free( node );
+}
+
+void dfs_traverse( struct ast_node* node, process_cb preproccess_cb, process_cb postprocess_cb ) {
+  if ( node == NULL ) return;
+  node->is_visited = true;
+
+  preproccess_cb( node );
+  
+  switch ( node->type ) {
+    case ANT_PROGRAM: dfs_traverse( node->as_program.child, preproccess_cb, postprocess_cb ); break;
+    case ANT_STMTS_LIST: {
+      struct ast_node* iter = node;
+      while ( iter != NULL ) {
+        dfs_traverse( iter->as_stmts_list.current, preproccess_cb, postprocess_cb );
+        struct ast_node* temp = iter;
+        iter = iter->as_stmts_list.next;
+        postprocess_cb( temp ); // for good freeing
+      }
+      return;
+    }
+    case ANT_REPEAT: {
+      dfs_traverse( node->as_repeat.body, preproccess_cb, postprocess_cb );
+      dfs_traverse( node->as_repeat.test, preproccess_cb, postprocess_cb );
+      break;
+    }
+    case ANT_BRANCH: {
+      dfs_traverse( node->as_branch.test, preproccess_cb, postprocess_cb );
+      dfs_traverse( node->as_branch.consequent, preproccess_cb, postprocess_cb );
+      dfs_traverse( node->as_branch.alternate, preproccess_cb, postprocess_cb );
+      break;
+    }
+    case ANT_UNEXPR: dfs_traverse( node->as_unexpr.argument, preproccess_cb, postprocess_cb ); break;
+    case ANT_EXPR: {
+      dfs_traverse( node->as_expr.left, preproccess_cb, postprocess_cb );
+      dfs_traverse( node->as_expr.right, preproccess_cb, postprocess_cb );
+      break;
+    }
+    default: break;
+  }
+
+  postprocess_cb( node );
+  return;
+}
+
+void free_ast( struct ast_node* root ) {
+  dfs_traverse( root, dump_cb, free_node );
 }
