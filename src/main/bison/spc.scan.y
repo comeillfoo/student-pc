@@ -123,7 +123,10 @@ int main( void ) {
   // traverse AST for generating TAC
   if ( root == NULL )
     fprintf( stderr, "can't find root\n" );
-  else dfs_traverse( root, pre_print_tac, post_print_tac );
+  else {
+    print_tac( root );
+    printf( "\n" );
+  }
 
   // free the ast
   free_ast( root );

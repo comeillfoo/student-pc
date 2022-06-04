@@ -3,7 +3,6 @@
 
 #include "ast.h"
 
-void pre_print_tac( struct ast_node* node );
-void post_print_tac( struct ast_node* node );
+void print_tac( struct ast_node* );
 
 #endif /* _TAC_H_ */
