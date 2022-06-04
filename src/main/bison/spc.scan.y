@@ -16,8 +16,6 @@
   void yyerror( char const* s );
 
   static struct ast_node* root = NULL; // pointer to the root of AST
-
-  static bool is_variables = true; // TODO: change to the symbol table
 %}
 
 %union {
@@ -56,10 +54,10 @@
 program: variables_declaration description_of_calculations { $$ = root = make_program( $2 ); }
  ;
 
-description_of_calculations: composed_statement DOT { is_variables = false; $$ = $1; }
+description_of_calculations: composed_statement DOT { $$ = $1; }
  ;
 
-variables_declaration: VAR variables_list { is_variables = true; /* there should be work with symbols table */ }
+variables_declaration: VAR variables_list { /* there should be work with symbols table */ }
  ;
 
 variables_list: IDENT EOEXPR   { /* there should be work with symbols table */ }
@@ -105,7 +103,7 @@ binop: MINUS   { $$ = OT_MINUS;       }
  | BIN_EQUALS  { $$ = OT_BIN_EQUALS;  }
  ;
 
-operand: IDENT { if ( !is_variables ) $$ = make_ident( $1 ); }
+operand: IDENT { $$ = make_ident( $1 ); }
  | CONST       { $$ = make_const( $1 ); }
  ;
 
