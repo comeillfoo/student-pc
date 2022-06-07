@@ -107,4 +107,6 @@ void dfs_traverse( struct ast_node*, process_cb, process_cb );
 
 void free_ast( struct ast_node* );
 
+int print_ast( struct ast_node* );
+
 #endif // _AST_H_

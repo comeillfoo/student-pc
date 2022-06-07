@@ -124,12 +124,13 @@ loop_statement: REPEAT statements_list UNTIL expression { $$ = make_repeat( $4, 
 
 int main( int argc, char** argv ) {
   int optidx = 0;
-  int is_input = 0, is_output = 0;
+  int is_input = 0, is_output = 0, is_ast = 0;
   struct option options[] = {
     { "out",     required_argument, NULL, 'o' },
     { "file",    required_argument, NULL, 'f' },
     { "help",    no_argument,       NULL, 'h' },
     { "verbose", no_argument,       NULL, 'v' },
+    { "ast",     no_argument,       NULL, 'a' },
     { 0, 0, 0, 0 }
   };
 
@@ -147,6 +148,8 @@ int main( int argc, char** argv ) {
           "\n\t\tspecifies the input file path, default: stdin"
           "\n\t-o, --out"
           "\n\t\tspecifies the output file path, default: a.out"
+          "\n\t-a, --ast"
+          "\n\t\tif option presents then ast tree prints in stderr"
           "\n\t-v, --verbose"
           "\n\t\tenables extra output\n"
         );
@@ -157,6 +160,8 @@ int main( int argc, char** argv ) {
         yyout = fopen( optarg, "w" ); is_output = 1; break;
       case 'v':
         is_verbose = 1; break;
+      case 'a':
+        is_ast = 1; break;
       default:
         exit(-1);
     }
@@ -172,6 +177,7 @@ int main( int argc, char** argv ) {
   if ( root == NULL )
     is_verbose && fprintf( stderr, "can't find root\n" );
   else {
+    is_ast && print_ast( root );
     print_tac( yyout, root );
     fprintf( yyout, "\n" );
   }
