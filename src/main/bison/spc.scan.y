@@ -19,6 +19,7 @@
   int yylex(void);
   void yyerror( char const* s );
 
+  int is_verbose = 0;
   static struct ast_node* root = NULL; // pointer to the root of AST
 %}
 
@@ -122,26 +123,60 @@ loop_statement: REPEAT statements_list UNTIL expression { $$ = make_repeat( $4, 
 %%
 
 int main( int argc, char** argv ) {
+  int optidx = 0;
+  int is_input = 0, is_output = 0;
+  struct option options[] = {
+    { "out",     required_argument, NULL, 'o' },
+    { "file",    required_argument, NULL, 'f' },
+    { "help",    no_argument,       NULL, 'h' },
+    { "verbose", no_argument,       NULL, 'v' },
+    { 0, 0, 0, 0 }
+  };
 
-  if ( argc > 1 )
-    yyin = fopen( argv[ 1 ], "r" );
-
+  char brief_option;
+  while ( -1 != (brief_option = getopt_long( argc, argv, "vhf:o:", options, &optidx )) )
+    switch ( brief_option ) {
+      case 'h':
+        fprintf( stderr,
+          "SYNOPSYS"
+          "\n\tspc [-v] [-f <input file>] [-o <output file>]"
+          "\nDESCRIPTION"
+          "\n\t-h, --help"
+          "\n\t\tshows this help message and exits"
+          "\n\t-f, --file"
+          "\n\t\tspecifies the input file path, default: stdin"
+          "\n\t-o, --out"
+          "\n\t\tspecifies the output file path, default: a.out"
+          "\n\t-v, --verbose"
+          "\n\t\tenables extra output\n"
+        );
+        return 0;
+      case 'f':
+        yyin = fopen( optarg, "r" ); is_input = 1; break;
+      case 'o':
+        yyout = fopen( optarg, "w" ); is_output = 1; break;
+      case 'v':
+        is_verbose = 1; break;
+      default:
+        exit(-1);
+    }
+  
   bool parse_result = yyparse( );
-  if ( argc > 1 )
+  if ( is_input )
     fclose( yyin );
 
-  if ( argc > 2 )
-    yyout = fopen( argv[ 2 ], "w" );
+  if ( !is_output )
+    yyout = fopen( "a.out", "w" );
 
   // traverse AST for generating TAC
   if ( root == NULL )
-    fprintf( stderr, "can't find root\n" );
+    is_verbose && fprintf( stderr, "can't find root\n" );
   else {
     print_tac( yyout, root );
     fprintf( yyout, "\n" );
   }
-  if ( argc > 2 )
-    fclose( yyout );
+  
+  fclose( yyout );
 
   // free the ast
   free_ast( root );
