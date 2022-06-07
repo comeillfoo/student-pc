@@ -11,6 +11,10 @@
   #include <stdio.h>
   #include <stdlib.h>
   #include <stdbool.h>
+  #include <getopt.h>
+
+  extern FILE* yyin;
+  extern FILE* yyout;
 
   int yylex(void);
   void yyerror( char const* s );
@@ -117,16 +121,27 @@ loop_statement: REPEAT statements_list UNTIL expression { $$ = make_repeat( $4, 
 
 %%
 
-int main( void ) {
+int main( int argc, char** argv ) {
+
+  if ( argc > 1 )
+    yyin = fopen( argv[ 1 ], "r" );
+
   bool parse_result = yyparse( );
+  if ( argc > 1 )
+    fclose( yyin );
+
+  if ( argc > 2 )
+    yyout = fopen( argv[ 2 ], "w" );
 
   // traverse AST for generating TAC
   if ( root == NULL )
     fprintf( stderr, "can't find root\n" );
   else {
-    print_tac( root );
-    printf( "\n" );
+    print_tac( yyout, root );
+    fprintf( yyout, "\n" );
   }
+  if ( argc > 2 )
+    fclose( yyout );
 
   // free the ast
   free_ast( root );
