@@ -1,7 +1,7 @@
 // fact8.pas
 Var n, result;
 Begin
-    n = 8;
+    n = 5;
     result = 1;
     REPEAT
         result = result * n;

@@ -63,7 +63,6 @@
 ### 1.1. Лексер
 
 Статус: написан и генерирует токены.
-TODO:   избавиться от варнингов -> настроить приоритет.
 
 ### 1.2. Реализация правил грамматики
 #### Список реализованных правил
@@ -99,42 +98,42 @@ TODO:   избавиться от варнингов -> настроить пр�
     SYNOPSYS
         spc [-v] [-f <input file>] [-o <output file>]
     DESCRIPTION
-    -h, --help
-    shows this help message and exits
-    -f, --file
-    specifies the input file path, default: stdin
-    -o, --out
-    specifies the output file path, default: a.out
-    -a, --ast
-    if option presents then ast tree prints in stderr
-    -v, --verbose
-    enables extra output
+        -h, --help
+            shows this help message and exits
+        -f, --file
+            specifies the input file path, default: stdin
+        -o, --out
+            specifies the output file path, default: a.out
+        -a, --ast
+            if option presents then ast tree prints in stderr
+        -v, --verbose
+            enables extra output
 
 ### 3. Вывод ast
-    ./spc --ast < programs/fact8.pas
+    ./spc --ast < programs/fact5.pas
     <program:0x5567574baf00[ child: 0x5567574babd0 ]>
-    <statements-list:0x5567574babd0[ current: 0x5567574b95b0, next: 0x5567574badf0 ]>
-    <expression:0x5567574b95b0[ left: 0x5567574b94a0, oper: =, right: 0x5567574b9390 ]>
-    <identifier:0x5567574b94a0[ name: n ]>
-    <constant:0x5567574b9390[ value: 5 ]>
-    <expression:0x5567574b9900[ left: 0x5567574b97f0, oper: =, right: 0x5567574b96e0 ]>
-    <identifier:0x5567574b97f0[ name: result ]>
-    <constant:0x5567574b96e0[ value: 1 ]>
-    <repeat-until:0x5567574baac0[ test: 0x5567574ba9b0, body: 0x5567574ba550 ]>
-    <statements-list:0x5567574ba550[ current: 0x5567574b9eb0, next: 0x5567574ba660 ]>
-    <expression:0x5567574b9eb0[ left: 0x5567574b9da0, oper: =, right: 0x5567574b9c90 ]>
-    <identifier:0x5567574b9da0[ name: result ]>
-    <expression:0x5567574b9c90[ left: 0x5567574b9a50, oper: *, right: 0x5567574b9b80 ]>
-    <identifier:0x5567574b9a50[ name: result ]>
-    <identifier:0x5567574b9b80[ name: n ]>
-    <expression:0x5567574ba440[ left: 0x5567574ba330, oper: =, right: 0x5567574ba220 ]>
-    <identifier:0x5567574ba330[ name: n ]>
-    <expression:0x5567574ba220[ left: 0x5567574ba000, oper: -, right: 0x5567574ba110 ]>
-    <identifier:0x5567574ba000[ name: n ]>
-    <constant:0x5567574ba110[ value: 1 ]>
-    <expression:0x5567574ba9b0[ left: 0x5567574ba790, oper: ==, right: 0x5567574ba8a0 ]>
-    <identifier:0x5567574ba790[ name: n ]>
-    <constant:0x5567574ba8a0[ value: 1 ]>
+        <statements-list:0x5567574babd0[ current: 0x5567574b95b0, next: 0x5567574badf0 ]>
+            <expression:0x5567574b95b0[ left: 0x5567574b94a0, oper: =, right: 0x5567574b9390 ]>
+                <identifier:0x5567574b94a0[ name: n ]>
+                <constant:0x5567574b9390[ value: 5 ]>
+            <expression:0x5567574b9900[ left: 0x5567574b97f0, oper: =, right: 0x5567574b96e0 ]>
+                <identifier:0x5567574b97f0[ name: result ]>
+                <constant:0x5567574b96e0[ value: 1 ]>
+            <repeat-until:0x5567574baac0[ test: 0x5567574ba9b0, body: 0x5567574ba550 ]>
+                <statements-list:0x5567574ba550[ current: 0x5567574b9eb0, next: 0x5567574ba660 ]>
+                    <expression:0x5567574b9eb0[ left: 0x5567574b9da0, oper: =, right: 0x5567574b9c90 ]>
+                        <identifier:0x5567574b9da0[ name: result ]>
+                        <expression:0x5567574b9c90[ left: 0x5567574b9a50, oper: *, right: 0x5567574b9b80 ]>
+                            <identifier:0x5567574b9a50[ name: result ]>
+                            <identifier:0x5567574b9b80[ name: n ]>
+                <expression:0x5567574ba440[ left: 0x5567574ba330, oper: =, right: 0x5567574ba220 ]>
+                    <identifier:0x5567574ba330[ name: n ]>
+                    <expression:0x5567574ba220[ left: 0x5567574ba000, oper: -, right: 0x5567574ba110 ]>
+                        <identifier:0x5567574ba000[ name: n ]>
+                        <constant:0x5567574ba110[ value: 1 ]>
+                <expression:0x5567574ba9b0[ left: 0x5567574ba790, oper: ==, right: 0x5567574ba8a0 ]>
+                    <identifier:0x5567574ba790[ name: n ]>
+                    <constant:0x5567574ba8a0[ value: 1 ]>
 
 ### 4. TAC
     ./spc -o b.out < programs/fact8.pas
